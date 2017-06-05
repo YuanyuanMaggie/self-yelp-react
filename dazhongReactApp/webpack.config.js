@@ -29,7 +29,7 @@ module.export = {
             {
                 test: /\.css$/,
                 exclude: /node_modules/,
-                loader:'style!css?modules!postcss'// 感叹号的作用在于使同一文件能够使用不同类型的loader (css-loader, style-loader)
+                loader:'style!css?modules!postcss'
             }, {
                 test:/\.(png|gif|jpg|jpge|bmp)$/i,
                 loader:'url-loader?limit=5000'
@@ -46,11 +46,11 @@ module.export = {
         new HtmlWebpackPlugin({
             template: __dirname + "/app/index.tmpl.html"
         }),
-        new webpack.HotModuleReplacementPlugin(), //热加载插件
+        new webpack.HotModuleReplacementPlugin(), 
         new OpenBrowserPlugin({
           url: 'http://localhost:3000'
         }),
-        // 可在业务 js 代码中使用 __DEV__ 判断是否是dev模式（dev模式下可以提示错误、测试报告等, production模式不提示）
+
         new webpack.DefinePlugin({
           __DEV__: JSON.stringify(JSON.parse((process.env.NODE_ENV == 'dev') || 'false'))
         })

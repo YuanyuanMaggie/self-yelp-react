@@ -19,8 +19,8 @@ module.export = {
     module: {
         loaders: [
         { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel' },
-        { test: /\.less$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract('style', 'css!postcss!less') },
-        { test: /\.css$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract('style', 'css!postcss') },
+        { test: /\.less$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract({fallback:'style', use:'css!postcss!less'}) },
+        { test: /\.css$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract({fallback:'style', use:'css!postcss'}) },
         { test:/\.(png|gif|jpg|jpeg|bmp)$/i, loader:'url-loader?limit=5000&name=img/[name].[chunkhash:8].[ext]' },
         { test:/\.(png|woff|woff2|svg|ttf|eot)($|\?)/i, loader:'url-loader?limit=5000&name=fonts/[name].[chunkhash:8].[ext]'}
     ]
@@ -29,7 +29,7 @@ module.export = {
         require('autoprefixer')
     ],
     plugins: [
-        new webpack.BannerPlugin("Copyright by wangfupeng1988@github.com."),
+        new webpack.BannerPlugin("Copyright by maggie."),
         new HtmlWebpackPlugin({
             template: __dirname + "/app/index.tmpl.html"
         }),
@@ -39,18 +39,17 @@ module.export = {
             }
         }),
         new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.optimize.UglifyJsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        }),
         
-        // 分离CSS和JS文件
         new ExtractTextPlugin('/css/[name].[chunkhash:8].css'), 
-        
-        // 提供公共代码
         new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
         filename: '/js/[name].[chunkhash:8].js'
         }),
-
-        // 可在业务 js 代码中使用 __DEV__ 判断是否是dev模式（dev模式下可以提示错误、测试报告等, production模式不提示）
         new webpack.DefinePlugin({
         __DEV__: JSON.stringify(JSON.parse((process.env.NODE_ENV == 'dev') || 'false'))
         })
