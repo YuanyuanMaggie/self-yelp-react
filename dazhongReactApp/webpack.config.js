@@ -3,14 +3,14 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var OpenBrowserPlugin = require('open-browser-webpack-plugin');
 
-module.export = {
-    devtool: 'eval-source-map',
-    entry: path.resolve(__dirname + "app/index.jsx"),
+module.exports = {
+    entry: path.resolve(__dirname + "/app/index.js"),
     output: {
+        path:path.resolve(__dirname,"build"),
         filename: "bundle.js"
     },
     resolve: {
-        extensions: ['', '.js', '.jsx']
+        extensions: [ '.js', '.jsx']
     },
     module: {
         loaders: [
@@ -20,16 +20,16 @@ module.export = {
             },{
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: 'babel'
+                loader: 'babel-loader'
             },{
-                text: /\.less$/,
+                test: /\.less$/,
                 exclude:/node_modules/,
-                loader:'style!css!postcss!less'
+                loader:'style-loader!css-loader!less-loader'
             },
             {
                 test: /\.css$/,
                 exclude: /node_modules/,
-                loader:'style!css?modules!postcss'
+                loader:'style-loader!css-loader?modules'
             }, {
                 test:/\.(png|gif|jpg|jpge|bmp)$/i,
                 loader:'url-loader?limit=5000'
@@ -39,16 +39,18 @@ module.export = {
             }
         ]
     },
-    postcss: [
-        require('autoprefixer')
-    ],
     plugins: [
+        new webpack.LoaderOptionsPlugin({
+            postcss: [
+                require('autoprefixer')
+            ],
+        }),
         new HtmlWebpackPlugin({
             template: __dirname + "/app/index.tmpl.html"
         }),
         new webpack.HotModuleReplacementPlugin(), 
         new OpenBrowserPlugin({
-          url: 'http://localhost:3000'
+          url: 'http://localhost:8080'
         }),
 
         new webpack.DefinePlugin({
@@ -57,7 +59,6 @@ module.export = {
     ],
     devServer: {
         contentBase: "./public",
-        colors: true,
         historyApiFallback: true,
         inline: true,
         hot: true
